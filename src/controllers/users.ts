@@ -14,7 +14,7 @@ export const getUsers = async (req: Request, res: Response) => {
     const users = await User.find({});
     return res.status(SUCCESS).send({ data: users });
   } catch (error) {
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -32,7 +32,7 @@ export const createUser = async (req: Request, res: Response) => {
     });
     return res.status(CREATED).send(newUser);
   } catch (error) {
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -51,7 +51,7 @@ export const getUserId = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -75,7 +75,7 @@ export const userUpdate = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -99,6 +99,6 @@ export const avatarUpdate = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };

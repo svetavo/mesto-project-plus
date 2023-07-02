@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 interface IUser {
+  email: string;
+  password: string;
   name: string;
   about: string;
   avatar: string;
@@ -8,6 +10,8 @@ interface IUser {
 
 const userSchema = new mongoose.Schema<IUser>(
   {
+    email: { type: String },
+    password: { type: String },
     name: {
       type: String,
       minlength: [2, "Минимальная длина 2 символа"],

@@ -1,7 +1,7 @@
 {
   "name": "mesto",
   "version": "1.0.0",
-  "description": "Svetlana Vostrikova",
+  "description": "mesto",
   "main": "dist/app.js",
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
@@ -10,7 +10,7 @@
     "start": "ts-node src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "< Укажите здесь автора работы >",
+  "author": "Svetlana Vostrikova",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.13",
@@ -23,8 +23,10 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "http-errors": "^2.0.0",
-    "mongoose": "^6.11.2"
+    "mongoose": "^6.11.2",
+    "validator": "^13.9.0"
   }
 }

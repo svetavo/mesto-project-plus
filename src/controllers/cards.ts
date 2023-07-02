@@ -14,7 +14,7 @@ export const getCards = async (req: Request, res: Response) => {
     const cards = await Card.find({});
     return res.status(200).send({ data: cards });
   } catch (error) {
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -34,7 +34,7 @@ export const createCard = async (req: Request, res: Response) => {
     }
     return res
       .status(INTERNAL_ERROR)
-      .send({ message: "Произошла ошибка на стороне сервера" });
+      .send({ message: "На сервере произошла ошибка" });
   }
 };
 
@@ -53,7 +53,7 @@ export const getCard = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -72,7 +72,7 @@ export const deleteCard = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -96,7 +96,7 @@ export const putLike = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
@@ -117,7 +117,7 @@ export const deleteLike = async (req: Request, res: Response) => {
     if (error instanceof mongoose.Error.CastError) {
       return res.status(INVALID_DATA).send("Передан не валидный id");
     }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return res.status(INTERNAL_ERROR).send("На сервере произошла ошибка");
   }
 };
 
