@@ -1,7 +1,7 @@
 {
-  "name": "starterkits",
+  "name": "mesto",
   "version": "1.0.0",
-  "description": "< Добавьте описание проекта в свободной форме >",
+  "description": "Svetlana Vostrikova",
   "main": "dist/app.js",
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
@@ -23,7 +23,8 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "express": "^4.18.1",
-    "mongoose": "^6.5.0"
+    "express": "^4.18.2",
+    "http-errors": "^2.0.0",
+    "mongoose": "^6.11.2"
   }
 }
