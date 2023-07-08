@@ -1,4 +1,4 @@
-import express, { Response, Request, NextFunction } from "express";
+import express from "express";
 import mongoose from "mongoose";
 import router from "./routes/index";
 import { login, createUser } from "./controllers/users";
