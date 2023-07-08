@@ -22,9 +22,9 @@ app.post("/signin", login);
 app.post("/signup", createUser);
 
 app.use(router);
-app.use(errorLogger);
-
 app.use(errorHandler);
+
+app.use(errorLogger);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

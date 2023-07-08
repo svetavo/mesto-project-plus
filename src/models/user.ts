@@ -1,5 +1,5 @@
-import { NextFunction } from "express";
 import mongoose from "mongoose";
+import { NextFunction } from "express";
 import { urlValidation } from "../utils/constant";
 
 const validator = require("validator");
