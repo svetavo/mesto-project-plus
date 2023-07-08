@@ -1,123 +1,106 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import Card from "../models/card";
-import mongoose from "mongoose";
-import {
-  INVALID_DATA,
-  NOT_FOUND,
-  INTERNAL_ERROR,
-  SUCCESS,
-  CREATED,
-} from "../utils/status-codes";
+import { SUCCESS, CREATED } from "../utils/status-codes";
+import { IUserReq } from "../utils/types";
 
-export const getCards = async (req: Request, res: Response) => {
+const CustomError = require("../ errors/custom-error");
+
+export const getCards = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const cards = await Card.find({});
     return res.status(200).send({ data: cards });
   } catch (error) {
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    next(error);
   }
 };
 
-export const createCard = async (req: Request, res: Response) => {
+export const createCard = async (
+  req: IUserReq,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const newCard = await Card.create({
       name: req.body.name,
       link: req.body.link,
-      owner: req.body.user._id,
+      owner: req.user!._id,
     });
     return res.status(CREATED).send(newCard);
   } catch (error) {
-    if (error instanceof mongoose.Error.ValidationError) {
-      return res
-        .status(INVALID_DATA)
-        .send({ message: "Переданы невалидные данные" });
-    }
-    return res
-      .status(INTERNAL_ERROR)
-      .send({ message: "Произошла ошибка на стороне сервера" });
+    next(error);
   }
 };
 
-export const getCard = async (req: Request, res: Response) => {
+export const getCard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const card = await Card.findById(req.params.cardId).orFail(
-      new Error("NotFound")
-    );
+    const card = await Card.findById(req.params.cardId).orFail();
     return res.status(SUCCESS).send(card);
   } catch (error) {
-    if (error instanceof Error && error.message === "NotFound") {
-      return res
-        .status(NOT_FOUND)
-        .send("Карточка по указанному _id не найдена");
-    }
-    if (error instanceof mongoose.Error.CastError) {
-      return res.status(INVALID_DATA).send("Передан не валидный id");
-    }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return next(new CustomError(404, "Карточка не найдена"));
   }
 };
-
-export const deleteCard = async (req: Request, res: Response) => {
-  try {
-    const card = await Card.findByIdAndDelete(req.params.cardId).orFail(
-      new Error("NotFound")
-    );
-    return res.status(SUCCESS).send(card);
-  } catch (error) {
-    if (error instanceof Error && error.message === "NotFound") {
-      return res
-        .status(NOT_FOUND)
-        .send("Карточка по указанному _id не найдена");
-    }
-    if (error instanceof mongoose.Error.CastError) {
-      return res.status(INVALID_DATA).send("Передан не валидный id");
-    }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
-  }
+export const deleteCard = async (
+  req: IUserReq,
+  res: Response,
+  next: NextFunction
+) => {
+  const owner = req.user!._id;
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        return next(new CustomError(404, "Карточка не найдена"));
+      }
+      if (card?.owner.toString() === owner) {
+        Card.findByIdAndDelete(req.params.cardId);
+        return res.status(SUCCESS).send("Карточка удалена");
+      }
+      return next(
+        new CustomError(403, "У вас недостаточно прав для удаления карточки")
+      );
+    })
+    .catch((error) => {
+      return next(error);
+    });
 };
 
-export const putLike = async (req: Request, res: Response) => {
-  try {
-    console.log(req.body.user._id);
-    console.log(req.params.cardId);
-    const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $addToSet: { likes: req.body.user._id } }, // добавить _id в массив, если его там нет
-      { new: true }
-    ).orFail(new Error("NotFound"));
-    return res.status(SUCCESS).send(card);
-  } catch (error) {
-    console.log(error);
-    if (error instanceof Error && error.message === "NotFound") {
-      return res
-        .status(NOT_FOUND)
-        .send("Карточка по указанному _id не найдена");
-    }
-    if (error instanceof mongoose.Error.CastError) {
-      return res.status(INVALID_DATA).send("Передан не валидный id");
-    }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
-  }
-};
-
-export const deleteLike = async (req: Request, res: Response) => {
+export const putLike = async (
+  req: IUserReq,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
-      { $pull: { likes: req.body.user._id } }, // убрать _id из массива
+      { $addToSet: { likes: req.user!._id } },
       { new: true }
-    ).orFail(new Error("NotFound"));
+    ).orFail();
     return res.status(SUCCESS).send(card);
   } catch (error) {
-    if (error instanceof Error && error.message === "NotFound") {
-      return res
-        .status(NOT_FOUND)
-        .send("Карточка по указанному _id не найдена");
-    }
-    if (error instanceof mongoose.Error.CastError) {
-      return res.status(INVALID_DATA).send("Передан не валидный id");
-    }
-    return res.status(INTERNAL_ERROR).send("Ошибка сервера");
+    return next(new CustomError(404, "Карточка не найдена"));
   }
 };
 
+export const deleteLike = async (
+  req: IUserReq,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user!._id } },
+      { new: true }
+    ).orFail();
+    return res.status(SUCCESS).send(card);
+  } catch (error) {
+    return next(new CustomError(404, "Карточка не найдена"));
+  }
+};
