@@ -1,5 +1,5 @@
-import { NextFunction } from "express";
 import mongoose from "mongoose";
+import { NextFunction } from "express";
 import { urlValidation } from "../utils/constant";
 
 const validator = require("validator");
@@ -12,8 +12,6 @@ interface IUser {
   name: string;
   about: string;
   avatar: string;
-  email: string;
-  password: string;
 }
 
 interface UserModel extends mongoose.Model<IUser> {
@@ -25,8 +23,6 @@ interface UserModel extends mongoose.Model<IUser> {
 
 const userSchema = new mongoose.Schema<IUser, UserModel>(
   {
-    email: { type: String },
-    password: { type: String },
     name: {
       type: String,
       minlength: [2, "Минимальная длина 2 символа"],
