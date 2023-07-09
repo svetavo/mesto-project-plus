@@ -6,7 +6,7 @@ import { IUserReq } from "../utils/types";
 
 require("dotenv").config();
 
-const CustomError = require("../ errors/custom-error");
+const CustomError = require("../errors/custom-error");
 
 const bcrypt = require("bcrypt");
 

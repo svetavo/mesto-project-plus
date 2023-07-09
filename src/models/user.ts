@@ -4,7 +4,7 @@ import { urlValidation } from "../utils/constant";
 
 const validator = require("validator");
 const bcrypt = require("bcrypt");
-const CustomError = require("../ errors/custom-error");
+const CustomError = require("../errors/custom-error");
 
 interface IUser {
   email: string;
