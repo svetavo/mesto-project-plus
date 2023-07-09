@@ -3,7 +3,7 @@ import Card from "../models/card";
 import { SUCCESS, CREATED } from "../utils/status-codes";
 import { IUserReq } from "../utils/types";
 
-const CustomError = require("../ errors/custom-error");
+const CustomError = require("../errors/custom-error");
 
 export const getCards = async (
   req: Request,

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
-const CustomError = require("../ errors/custom-error");
+const CustomError = require("../errors/custom-error");
 
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
