@@ -40,7 +40,7 @@ export const createUser = async (
       about: req.body.about,
       avatar: req.body.avatar,
       email: req.body.email,
-      password: bcrypt.hash(req.body.password, 10),
+      password: await bcrypt.hash(req.body.password, 10),
     });
     return res.status(CREATED).send(newUser);
   } catch (error) {
