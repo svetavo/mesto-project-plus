@@ -1,12 +1,11 @@
-import { SUCCESS, CREATED } from "../utils/status-codes";
+import { SUCCESS, CREATED, CONFLICT } from "../utils/status-codes";
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { IUserReq } from "../utils/types";
+import { CustomError } from "../errors/custom-error";
 
 require("dotenv").config();
-
-const CustomError = require("../errors/custom-error");
 
 const bcrypt = require("bcrypt");
 
@@ -32,7 +31,7 @@ export const createUser = async (
     const existing = await User.findOne({ email: req.body.email });
     if (existing) {
       return next(
-        new CustomError(409, "Пользователь с таким email уже зарегистрирован")
+        CustomError.conflict("Пользователь с таким email уже зарегистрирован")
       );
     }
     const newUser = await User.create({
@@ -54,10 +53,13 @@ export const getCurrentUser = async (
   next: NextFunction
 ) => {
   try {
-    const current = await User.findById(req.user?._id).orFail();
+    const current = await User.findById(req.user?._id);
+    if (!current) {
+      return next(CustomError.notFound("Пользователь не найден"));
+    }
     return res.status(SUCCESS).send(current);
   } catch (error) {
-    return next(new CustomError(404, "Пользователь не найден"));
+    return next(error);
   }
 };
 
@@ -67,56 +69,58 @@ export const getUserId = async (
   next: NextFunction
 ) => {
   try {
-    const userFind = await User.findById(req.params.id).orFail();
+    const userFind = await User.findById(req.params.id);
+    if (!userFind) {
+      return next(CustomError.notFound("Пользователь не найден"));
+    }
     return res.status(SUCCESS).send(userFind);
   } catch (error) {
-    return next(new CustomError(404, "Пользователь не найден"));
+    return next(error);
   }
 };
 
 export const userUpdate = async (
-  req: Request,
+  req: IUserReq,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    if (!req.body.name) {
-      return next(
-        new CustomError(
-          409,
-          "Введены некорректные данные при обновлении информации о пользователе"
-        )
-      );
+    const user = await User.findByIdAndUpdate(
+      req.user!._id,
+      {
+        name: req.body.name,
+        about: req.body.about,
+      },
+      { new: true }
+    );
+    if (!user) {
+      return next(CustomError.notFound("Пользователь не найден"));
     }
-    const user = await User.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-    }).orFail();
     return res.status(SUCCESS).send(user);
   } catch (error) {
-    return next(new CustomError(404, "Пользователь не найден"));
+    return next(error);
   }
 };
 
 export const avatarUpdate = async (
-  req: Request,
+  req: IUserReq,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    if (!req.body.avatar) {
-      return next(
-        new CustomError(
-          409,
-          "Переданы некорректные данные при обновлении аватара"
-        )
-      );
+    const user = await User.findByIdAndUpdate(
+      req.user!._id,
+      {
+        avatar: req.body.avatar,
+      },
+      { new: true }
+    );
+    if (!user) {
+      return next(CustomError.notFound("Пользователь не найден"));
     }
-    const user = await User.findByIdAndUpdate(req.params.id, {
-      avatar: req.body.avatar,
-    }).orFail(new Error("UserNotFound"));
     return res.status(SUCCESS).send(user);
   } catch (error) {
-    return next(new CustomError(404, "Пользователь не найден"));
+    return next(error);
   }
 };
 
@@ -126,12 +130,8 @@ export const login = async (
   next: NextFunction
 ) => {
   const { email, password } = req.body;
-  if(!email || !password) {
-    return next(new CustomError(401, "Введите логин и пароль"));
-  }
   try {
     const user = await User.findUserByCredentials(email, password);
-    if (!user) return next(new CustomError(401, "Неверный логин или пароль"));
     return res.send({
       token: jwt.sign({ _id: user._id }, process.env.JWT_SECRET as string),
     });

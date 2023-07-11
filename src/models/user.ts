@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
-import { NextFunction } from "express";
 import { urlValidation } from "../utils/constant";
+import { CustomError } from "../errors/custom-error";
 
 const validator = require("validator");
 const bcrypt = require("bcrypt");
-const CustomError = require("../errors/custom-error");
 
 interface IUser {
   email: string;
@@ -56,7 +55,6 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
     password: {
       type: String,
       require: true,
-      default: "password",
       select: false,
     },
   },
@@ -65,24 +63,20 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
 
 userSchema.static(
   "findUserByCredentials",
-  function findUserByCredentials(
-    email: string,
-    password: string,
-    next: NextFunction
-  ) {
+  function findUserByCredentials(email: string, password: string) {
     return this.findOne({ email })
       .select("+password")
       .then((user) => {
         if (!user) {
           return Promise.reject(
-            next(new CustomError(401, "Неправильные почта или пароль"))
+            CustomError.unathorized("Неправильные почта или пароль")
           );
         }
 
         return bcrypt.compare(password, user.password).then((matched: any) => {
           if (!matched) {
             return Promise.reject(
-              next(new CustomError(401, "Неправильные почта или пароль"))
+              CustomError.unathorized("Неправильные почта или пароль")
             );
           }
 
@@ -91,5 +85,12 @@ userSchema.static(
       });
   }
 );
+
+userSchema.set("toJSON", {
+  transform(doc, ret, options) {
+    delete ret.password;
+    return ret;
+  },
+});
 
 export default mongoose.model<IUser, UserModel>("User", userSchema);

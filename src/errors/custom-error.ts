@@ -1,16 +1,30 @@
-export class CustomError extends Error {
+ export class CustomError extends Error {
   statusCode: number;
-  status: string;
-  isOperational: boolean;
 
   constructor(statusCode: number, message: string) {
     super(message);
     this.statusCode = statusCode;
-    this.status = statusCode >= 400 && statusCode < 500 ? "fail" : "error";
-    this.isOperational = true;
 
-    Error.captureStackTrace(this, this.constructor)
   }
-}
 
-module.exports = CustomError
+  static badRequest(message: string) {
+    return new CustomError(400, message);
+  }
+
+  static unathorized(message: string) {
+    return new CustomError(401, message);
+  }
+
+  static forbidden(message: string) {
+    return new CustomError(403, message);
+  }
+
+  static notFound(message: string) {
+    return new CustomError(404, message);
+  }
+
+  static conflict(message: string) {
+    return new CustomError(409, message);
+  }}
+
+

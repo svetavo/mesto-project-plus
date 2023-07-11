@@ -10,7 +10,7 @@ export const cardValidator = celebrate({
 
 export const cardIdValidator = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24).required(),
+    cardId: Joi.string().hex().length(24).required(),
   }),
 });
 
@@ -33,19 +33,19 @@ export const userLoginValidator = celebrate({
 
 export const userIdValidator = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
-    id: Joi.string().alphanum().length(24).required(),
+    id: Joi.string().hex().length(24).required(),
   }),
 });
 
 export const infoUpdateValidator = celebrate({
   [Segments.BODY]: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(200),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(200),
   }),
 });
 
 export const avatarUpdateValidator = celebrate({
   [Segments.BODY]: Joi.object().keys({
-    avatar: Joi.string().pattern(urlValidation),
+    avatar: Joi.string().required().pattern(urlValidation),
   }),
 });

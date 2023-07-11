@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
+import { urlValidation } from "../utils/constant";
 
 interface ICard {
   name: string;
   link: string;
-  owner: mongoose.Schema.Types.ObjectId | string;
-  likes: [mongoose.Types.ObjectId];
+  owner: mongoose.Schema.Types.ObjectId;
+  likes: mongoose.Types.ObjectId[];
   createdAt: Date;
 }
 
@@ -19,6 +20,7 @@ const cardSchema = new mongoose.Schema<ICard>(
     link: {
       type: String,
       required: true,
+      validator: (v: string) => urlValidation.test(v),
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +30,7 @@ const cardSchema = new mongoose.Schema<ICard>(
     likes: {
       type: [mongoose.Types.ObjectId],
       default: [],
+      ref: 'user',
       required: true,
     },
     createdAt: {
