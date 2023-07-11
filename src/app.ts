@@ -1,9 +1,11 @@
 import express from "express";
+import { errors } from "celebrate";
 import mongoose from "mongoose";
 import router from "./routes/index";
 import { login, createUser } from "./controllers/users";
 import { requestLogger, errorLogger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errors";
+import {userLoginValidator} from './middleware/validation'
 
 require("dotenv").config();
 
@@ -18,13 +20,13 @@ console.log("MongoDB connected!");
 app.use(express.json());
 
 app.use(requestLogger);
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.post("/signin", userLoginValidator, login);
+app.post("/signup", userLoginValidator, createUser);
 
 app.use(router);
-app.use(errorHandler);
-
 app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

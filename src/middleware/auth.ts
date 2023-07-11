@@ -3,7 +3,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 const CustomError = require("../errors/custom-error");
 
-require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 export interface IGetUserAuthInfoRequest extends Request {
