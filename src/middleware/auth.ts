@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
-
-const CustomError = require("../errors/custom-error");
+import { CustomError } from "../errors/custom-error";
 
 const jwt = require("jsonwebtoken");
 
@@ -17,7 +16,7 @@ export const authCheck = (
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return next(new CustomError(401, "Необходима авторизация"));
+    return next(CustomError.unathorized("Необходима авторизация"));
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -26,7 +25,7 @@ export const authCheck = (
   try {
     payload = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    return next(new CustomError(401, "Ошибка авторизации"));
+    return next(CustomError.unathorized("Необходима авторизация"));
   }
 
   req.user = payload; // записываем пейлоуд в объект запроса
