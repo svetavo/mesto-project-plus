@@ -1,10 +1,6 @@
 import { Router } from "express";
 import {
-  getCards,
-  createCard,
-  putLike,
-  deleteLike,
-  deleteCard,
+  getCards, createCard, putLike, deleteLike, deleteCard,
 } from "../controllers/cards";
 import { cardValidator, cardIdValidator } from "../middleware/validation";
 

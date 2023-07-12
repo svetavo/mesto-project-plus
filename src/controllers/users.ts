@@ -1,19 +1,15 @@
-import { SUCCESS, CREATED, CONFLICT } from "../utils/status-codes";
 import { NextFunction, Request, Response } from "express";
-import User from "../models/user";
 import jwt from "jsonwebtoken";
+import { SUCCESS, CREATED } from "../utils/status-codes";
+import User from "../models/user";
 import { IUserReq } from "../utils/types";
-import { CustomError } from "../errors/custom-error";
+import CustomError from "../errors/custom-error";
 
 require("dotenv").config();
 
 const bcrypt = require("bcrypt");
 
-export const getUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await User.find({});
     return res.status(SUCCESS).send({ data: users });
@@ -22,17 +18,11 @@ export const getUsers = async (
   }
 };
 
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const existing = await User.findOne({ email: req.body.email });
     if (existing) {
-      return next(
-        CustomError.conflict("Пользователь с таким email уже зарегистрирован")
-      );
+      return next(CustomError.conflict("Пользователь с таким email уже зарегистрирован"));
     }
     const newUser = await User.create({
       name: req.body.name,
@@ -47,11 +37,7 @@ export const createUser = async (
   }
 };
 
-export const getCurrentUser = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction
-) => {
+export const getCurrentUser = async (req: IUserReq, res: Response, next: NextFunction) => {
   try {
     const current = await User.findById(req.user?._id);
     if (!current) {
@@ -63,11 +49,7 @@ export const getCurrentUser = async (
   }
 };
 
-export const getUserId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getUserId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userFind = await User.findById(req.params.id);
     if (!userFind) {
@@ -79,11 +61,7 @@ export const getUserId = async (
   }
 };
 
-export const userUpdate = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction
-) => {
+export const userUpdate = async (req: IUserReq, res: Response, next: NextFunction) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user!._id,
@@ -91,7 +69,7 @@ export const userUpdate = async (
         name: req.body.name,
         about: req.body.about,
       },
-      { new: true }
+      { new: true },
     );
     if (!user) {
       return next(CustomError.notFound("Пользователь не найден"));
@@ -102,18 +80,14 @@ export const userUpdate = async (
   }
 };
 
-export const avatarUpdate = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction
-) => {
+export const avatarUpdate = async (req: IUserReq, res: Response, next: NextFunction) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user!._id,
       {
         avatar: req.body.avatar,
       },
-      { new: true }
+      { new: true },
     );
     if (!user) {
       return next(CustomError.notFound("Пользователь не найден"));
@@ -124,11 +98,7 @@ export const avatarUpdate = async (
   }
 };
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   try {
     const user = await User.findUserByCredentials(email, password);
@@ -136,6 +106,6 @@ export const login = async (
       token: jwt.sign({ _id: user._id }, process.env.JWT_SECRET as string),
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

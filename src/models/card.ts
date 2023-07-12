@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { urlValidation } from "../utils/constant";
+import urlValidation from "../utils/constant";
 
 interface ICard {
   name: string;
@@ -30,15 +30,14 @@ const cardSchema = new mongoose.Schema<ICard>(
     likes: {
       type: [mongoose.Types.ObjectId],
       default: [],
-      ref: 'user',
-      required: true,
+      ref: "user",
     },
     createdAt: {
       type: Date,
       default: Date.now,
     },
   },
-  { versionKey: false }
+  { versionKey: false },
 );
 
 export default mongoose.model<ICard>("Card", cardSchema);
