@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { urlValidation } from "../utils/constant";
-import { CustomError } from "../errors/custom-error";
+import urlValidation from "../utils/constant";
+import CustomError from "../errors/custom-error";
 
 const validator = require("validator");
 const bcrypt = require("bcrypt");
@@ -15,8 +15,10 @@ interface IUser {
 
 interface UserModel extends mongoose.Model<IUser> {
   findUserByCredentials: (
+    // eslint-disable-next-line no-unused-vars
     email: string,
-    password: string
+    // eslint-disable-next-line no-unused-vars
+    password: string,
   ) => Promise<mongoose.Document<unknown, any, IUser>>;
 }
 
@@ -36,8 +38,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
     },
     avatar: {
       type: String,
-      default:
-        "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png",
+      default: "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png",
       validator: {
         validator: (v: string) => urlValidation.test(v),
         message: "Неверный формат ссылки",
@@ -58,7 +59,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
       select: false,
     },
   },
-  { versionKey: false }
+  { versionKey: false },
 );
 
 userSchema.static(
@@ -68,26 +69,23 @@ userSchema.static(
       .select("+password")
       .then((user) => {
         if (!user) {
-          return Promise.reject(
-            CustomError.unathorized("Неправильные почта или пароль")
-          );
+          return Promise.reject(CustomError.unathorized("Неправильные почта или пароль"));
         }
 
         return bcrypt.compare(password, user.password).then((matched: any) => {
           if (!matched) {
-            return Promise.reject(
-              CustomError.unathorized("Неправильные почта или пароль")
-            );
+            return Promise.reject(CustomError.unathorized("Неправильные почта или пароль"));
           }
 
           return user;
         });
       });
-  }
+  },
 );
 
 userSchema.set("toJSON", {
-  transform(doc, ret, options) {
+  transform(doc, ret) {
+    // eslint-disable-next-line no-param-reassign
     delete ret.password;
     return ret;
   },

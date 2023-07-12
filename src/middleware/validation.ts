@@ -1,5 +1,5 @@
-import { urlValidation } from "../utils/constant";
 import { celebrate, Joi, Segments } from "celebrate";
+import urlValidation from "../utils/constant";
 
 export const cardValidator = celebrate({
   [Segments.BODY]: Joi.object().keys({
@@ -28,6 +28,16 @@ export const userLoginValidator = celebrate({
   [Segments.BODY]: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
+  }),
+});
+
+export const userRegValidator = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(200),
+    avatar: Joi.string().pattern(urlValidation),
   }),
 });
 

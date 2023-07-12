@@ -1,10 +1,9 @@
- export class CustomError extends Error {
+export default class CustomError extends Error {
   statusCode: number;
 
   constructor(statusCode: number, message: string) {
     super(message);
     this.statusCode = statusCode;
-
   }
 
   static badRequest(message: string) {
@@ -25,6 +24,5 @@
 
   static conflict(message: string) {
     return new CustomError(409, message);
-  }}
-
-
+  }
+}
