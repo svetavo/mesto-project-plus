@@ -2,7 +2,7 @@
 
 **Back-end for Mesto project. API frame**
 
-English below
+_English below_
 
 **Используемые технологии и решения:**
 - Typescript в качестве основного языка проекта
