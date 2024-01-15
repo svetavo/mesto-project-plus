@@ -1,27 +1,28 @@
-### Бэкенд Mesto. Каркас API Mesto
-### Back-end for Mesto project. API frame
+**Бэкенд Mesto. Каркас API Mesto**
+**Back-end for Mesto project. API frame**
 
 English below
 
-### Используемые технологии и решения:
+**Используемые технологии и решения:**
 - Typescript в качестве основного языка проекта
 - Mongodb и ODM Mongoose для хранения данных пользователей
 - Node.js в качестве среды выполнения
   
-### Запуск проекта:
-npm i
+**Инструкция по запуску приложения:**
 
-npm run dev
+    npm i
+   
+    npm run dev
 
+**ENGLISH**
 
-### English
-
-Stack:
+**Stack:**
 - Typescript
 - Mongodb, ODM Mongoose
 - Node.js
 
- ### Running:
-npm i
+**Running:**
 
-npm run dev
+    npm i
+   
+    npm run dev
